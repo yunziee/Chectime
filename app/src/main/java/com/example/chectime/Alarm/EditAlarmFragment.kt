@@ -40,6 +40,32 @@ class EditAlarmFragment : Fragment(R.layout.fragment_edit_alarm) {
             dayCheckboxes[day - 1].isChecked = true
         }
 
+        // NumberPicker 초기화
+        val hourPicker : NumberPicker = view.findViewById(R.id.hourPicker)
+        hourPicker.minValue = 1
+        hourPicker.maxValue = 12
+
+        val minutePicker : NumberPicker = view.findViewById(R.id.minutePicker)
+        minutePicker.minValue = 0
+        minutePicker.maxValue = 59
+
+        val amPmPicker : NumberPicker = view.findViewById(R.id.amPmPicker)
+        amPmPicker.minValue = 0
+        amPmPicker.maxValue = 1
+        amPmPicker.wrapSelectorWheel = false
+        amPmPicker.displayedValues = arrayOf("AM", "PM")
+
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = alarm.timeInMillis
+        var hour = calendar.get(Calendar.HOUR)
+        //if (hour == 0) = 12
+        val minute = calendar.get(Calendar.MINUTE)
+        val amPm = calendar.get(Calendar.AM_PM)
+
+        hourPicker.value = hour
+        minutePicker.value = minute
+        amPmPicker.value = amPm
+
         // 저장 버튼 클릭 이벤트 처리
         val saveButton: Button = view.findViewById(R.id.saveAlarmButton)
         saveButton.setOnClickListener {
@@ -48,21 +74,28 @@ class EditAlarmFragment : Fragment(R.layout.fragment_edit_alarm) {
                 .mapIndexed { index, checkBox -> if (checkBox.isChecked) index + 1 else null }
                 .filterNotNull()
 
-            // 알람 시간 업데이트
-            val calendar = Calendar.getInstance().apply {
-                timeInMillis = alarm.timeInMillis // 기존 알람 시간
-            }
+            // TimePicker에서 시간을 가져와 알람 시간 업데이트
+            val updatedCalendar = Calendar.getInstance()
+
+            //ampm
+
+            updatedCalendar.set(Calendar.HOUR_OF_DAY, hourPicker.value)
+            updatedCalendar.set(Calendar.MINUTE, minutePicker.value)
 
             // 알람 객체 업데이트
             alarm.label = updatedLabel
             alarm.days = updatedDays
+            alarm.timeInMillis = updatedCalendar.timeInMillis // 새로운 시간 설정
 
             // 알람 새로 설정
             setAlarm(alarm)
 
+            //변경사항 어댑터 반영
+            //(requireActivity() as MainActivity.update)
+
             // 변경된 알람을 저장
             Toast.makeText(requireContext(), "루틴이 수정되었습니다.", Toast.LENGTH_SHORT).show()
-            requireActivity().onBackPressed() // 이전 화면으로 돌아가기
+            requireActivity().supportFragmentManager.popBackStack() // 이전 화면으로 돌아가기
         }
     }
 

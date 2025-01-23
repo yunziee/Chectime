@@ -17,7 +17,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@id/minutePicker"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        />
 
     <NumberPicker
         android:id="@+id/minutePicker"
@@ -38,7 +39,8 @@
         app:layout_constraintBottom_toBottomOf="@id/minutePicker"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="10dp"
-        android:layout_marginStart="30dp" />
+        android:layout_marginStart="30dp"
+        />
 
     <!-- 알람 라벨 수정 -->
     <EditText

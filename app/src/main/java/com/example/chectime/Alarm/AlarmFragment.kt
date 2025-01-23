@@ -21,6 +21,9 @@ import java.util.Calendar
 
 class AlarmFragment : Fragment() {
 
+    private var _binding: FragmentAlarmBinding? = null
+    private val binding get() = _binding!!
+
     private val alarmList = ArrayList<Alarm>()
     private lateinit var alarmAdapter: AlarmAdapter
 
@@ -28,7 +31,7 @@ class AlarmFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = FragmentAlarmBinding.inflate(inflater, container, false)
+        _binding = FragmentAlarmBinding.inflate(inflater, container, false)
 
         // Android 13(API 33) 이상에서 정확한 알람 권한 확인
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {  // API 33 이상
@@ -39,7 +42,16 @@ class AlarmFragment : Fragment() {
             }
         }
 
-        val alarmRecyclerView: RecyclerView = binding.alarmRecyclerView
+        setupRecyclerView()
+        setupAddAlarmButton()
+
+        // 초기 알람 로드
+        loadAlarms()
+
+        return binding.root
+    }
+
+    private fun setupRecyclerView() {
         alarmAdapter = AlarmAdapter(
             alarmList,
             requireContext(),
@@ -48,16 +60,12 @@ class AlarmFragment : Fragment() {
             ::editAlarm // 수정 버튼 클릭 시 호출할 메서드 전달
         )
 
-        alarmRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        alarmRecyclerView.adapter = alarmAdapter
+        binding.alarmRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.alarmRecyclerView.adapter = alarmAdapter
+    }
 
-        val addAlarmButton: Button = binding.addAlarmButton
-        addAlarmButton.setOnClickListener { openAlarmDialog() }
-
-        // 초기 알람 로드
-        loadAlarms()
-
-        return binding.root
+    private fun setupAddAlarmButton() {
+        binding.addAlarmButton.setOnClickListener { openAlarmDialog() }
     }
 
     private fun openAlarmDialog() {
@@ -193,16 +201,22 @@ class AlarmFragment : Fragment() {
             calendar.set(Calendar.AM_PM, if (updatedIsPM) Calendar.PM else Calendar.AM)
             calendar.set(Calendar.MINUTE, updatedMinute)
 
+            // Alarm 객체 수정
             alarm.timeInMillis = calendar.timeInMillis
             alarm.label = updatedLabel
             alarm.days = updatedDays
 
+            // Adapter 갱신
             alarmAdapter.notifyDataSetChanged()
+
+            // 알람 업데이트
             setAlarm(alarm)
+
             Toast.makeText(requireContext(), "수정 완료!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
     }
+
 
     fun setAlarm(alarm: Alarm) {
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -223,14 +237,14 @@ class AlarmFragment : Fragment() {
 
     private fun loadAlarms() {
         alarmList.clear()
-//        val testAlarm = Alarm(
-//            id = 1,
-//            label = "Test Alarm",
-//            timeInMillis = System.currentTimeMillis() + 5000,
-//            isEnabled = true,
-//            days = listOf(1, 3, 5)
-//        )
-//        alarmList.add(testAlarm)
+        // Example 알람 추가
+        val sampleAlarm = Alarm(
+            id = 1,
+            label = "테스트 알람",
+            timeInMillis = System.currentTimeMillis() + 60000,
+            days = listOf(2, 4, 6)
+        )
+        alarmList.add(sampleAlarm)
         alarmAdapter.notifyDataSetChanged()
     }
 
@@ -245,5 +259,10 @@ class AlarmFragment : Fragment() {
         )
 
         alarmManager.cancel(pendingIntent)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

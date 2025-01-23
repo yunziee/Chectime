@@ -1,19 +1,14 @@
 package com.example.chectime
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Switch
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
 
 class AlarmAdapter(
     private val alarmList: ArrayList<Alarm>,
@@ -31,8 +26,10 @@ class AlarmAdapter(
     override fun onBindViewHolder(holder: AlarmViewHolder, position: Int) {
         val alarm = alarmList[position]
 
-        val daysString = alarm.days.joinToString(", ") { day ->
-            when (day){
+        holder.timeTextView.text = alarm.getFormattedTime()
+        holder.labelTextView.text = alarm.label
+        holder.daysTextView.text = alarm.days.joinToString(", ") { day ->
+            when (day) {
                 1 -> "Mon"
                 2 -> "Tue"
                 3 -> "Wed"
@@ -44,35 +41,35 @@ class AlarmAdapter(
             }
         }
 
-        holder.timeTextView.text = alarm.getFormattedTime()
-        holder.labelTextView.text = alarm.label
-        holder.daysTextView.text = daysString
         holder.alarmSwitch.isChecked = alarm.isEnabled
 
-        holder.alarmSwitch.setOnCheckedChangeListener {_, isChecked ->
+        holder.alarmSwitch.setOnCheckedChangeListener { _, isChecked ->
             alarm.isEnabled = isChecked
-            if (isChecked) setAlarm(alarm) else cancelAlarm(alarm)
+            if (isChecked) {
+                setAlarm(alarm)
+            } else {
+                cancelAlarm(alarm)
+            }
         }
+
         holder.deleteButton.setOnClickListener {
             alarmList.removeAt(position)
-            notifyDataSetChanged()
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, alarmList.size)
         }
-        // AlarmAdapter에서 editAlarm 콜백을 처리하는 부분
+
         holder.editButton.setOnClickListener {
-            // EditAlarmFragment를 생성하여 알람 객체를 전달
-            val fragment = EditAlarmFragment.newInstance(alarm)
+            editAlarm(alarm)
 
-            // 프래그먼트 트랜잭션을 통해 EditAlarmFragment로 화면 전환
-            val transaction = (context as AppCompatActivity).supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.fragment_container, fragment) // fragment_container는 프래그먼트를 담을 컨테이너 뷰의 ID
-            transaction.addToBackStack(null) // 뒤로 가기 스택에 추가
-            transaction.commit()
+            // 데이터가 수정되었을 경우 반영
+            notifyDataSetChanged() // 데이터를 변경한 후 반드시 호출
         }
-
     }
+
 
     override fun getItemCount(): Int = alarmList.size
 
+    // ViewHolder 클래스
     inner class AlarmViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val timeTextView: TextView = itemView.findViewById(R.id.timeTextView)
         val labelTextView: TextView = itemView.findViewById(R.id.labelTextView)
