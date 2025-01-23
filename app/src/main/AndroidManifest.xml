@@ -27,6 +27,15 @@
             </intent-filter>
         </activity>
 
+        <receiver android:name=".AlarmReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="android.permission.SET_ALARM">
+            <intent-filter>
+                <action android:name="com.example.guru2c15.ALARM_ACTION" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

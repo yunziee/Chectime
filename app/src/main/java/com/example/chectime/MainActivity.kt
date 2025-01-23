@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.nav_calendar -> loadFragment(CalendarFragment()) // 캘린더
                 R.id.nav_bookshelf -> loadFragment(BookshelfFragment()) // 책장
-//                R.id.nav_routine -> loadFragment(AlarmFragment()) // 루틴
+                R.id.nav_routine -> loadFragment(AlarmFragment()) // 루틴
 //                R.id.nav_timer -> loadFragment(TimerFragment()) // 타이머
 //                R.id.nav_settings -> loadFragment(SettingsFragment()) // 설정
                 else -> false
