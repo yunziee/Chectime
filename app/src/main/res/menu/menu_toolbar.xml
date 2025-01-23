@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!-- 돋보기 아이콘 메뉴 아이템 -->
+    <item
+        android:id="@+id/iv_search"
+        android:icon="@drawable/ic_search"
+        android:title="검색"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom" />  <!-- 툴바에 아이콘으로 표시 -->
+</menu>
