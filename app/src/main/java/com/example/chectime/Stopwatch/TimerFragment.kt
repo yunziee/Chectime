@@ -10,7 +10,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 
-class TimeFragment : Fragment() {
+class TimerFragment : Fragment() {
 
     private lateinit var tvTimer: TextView
     private lateinit var btnStart: Button
