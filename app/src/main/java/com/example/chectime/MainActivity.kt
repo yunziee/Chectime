@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
         // BottomNavigationView 설정
         val bottomNavigation: BottomNavigationView = findViewById(R.id.bottom_navigation)
 
-        // 초기 화면은 일단 책장으로 설정
+        // 초기 화면은 캘린더 화면
         loadFragment(CalendarFragment())
 
         // BottomNavigationView 클릭 리스너 설정
@@ -23,8 +23,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_calendar -> loadFragment(CalendarFragment()) // 캘린더
                 R.id.nav_bookshelf -> loadFragment(BookshelfFragment()) // 책장
                 R.id.nav_routine -> loadFragment(AlarmFragment()) // 루틴
-                R.id.nav_timer -> loadFragment(TimeFragment()) // 타이머
-//                R.id.nav_settings -> loadFragment(SettingsFragment()) // 설정
+                R.id.nav_timer -> loadFragment(TimerFragment()) // 타이머
+                R.id.nav_settings -> loadFragment(SettingsFragment()) // 설정
                 else -> false
             }
             true
