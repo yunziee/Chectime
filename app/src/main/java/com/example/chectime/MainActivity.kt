@@ -3,6 +3,7 @@ package com.example.chectime
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.example.chectime.Stopwatch.TimerFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
@@ -13,8 +14,7 @@ class MainActivity : AppCompatActivity() {
 
         // BottomNavigationView 설정
         val bottomNavigation: BottomNavigationView = findViewById(R.id.bottom_navigation)
-
-        // 초기 화면은 일단 책장으로 설정
+        
         loadFragment(CalendarFragment())
 
         // BottomNavigationView 클릭 리스너 설정
