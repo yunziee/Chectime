@@ -81,7 +81,7 @@ class CalendarFragment : Fragment() {
 
         // 현재 월의 첫 번째 날 설정
         tempCalendar.set(Calendar.DAY_OF_MONTH, 1)
-        // 월요일 기준으로 시작 요일 계산
+        // 월요일을 시작  기준으로 시작 요일 계산
         val startDayOfWeek = (tempCalendar.get(Calendar.DAY_OF_WEEK) + 5) % 7 + 1
 
         // 이전 달 날짜를 채우기 위해 시작 날짜 조정
