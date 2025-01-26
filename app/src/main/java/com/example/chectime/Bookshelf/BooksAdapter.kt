@@ -32,10 +32,15 @@ class BooksAdapter(private var books: List<Book>) : RecyclerView.Adapter<BooksAd
         private val titleTextView: TextView = itemView.findViewById(R.id.book_title)
         private val authorTextView: TextView = itemView.findViewById(R.id.book_author)
         private val coverImageView: ImageView = itemView.findViewById(R.id.book_image)
+        private val publisherTextView: TextView = itemView.findViewById(R.id.book_publisher)
+        private val isbnTextView: TextView = itemView.findViewById(R.id.book_isbn)
+
 
         fun bind(book: Book) {
             titleTextView.text = book.title
             authorTextView.text = book.author
+            publisherTextView.text = book.publisher
+            isbnTextView.text = book.isbn
             Picasso.get().load(book.cover).into(coverImageView)
         }
     }
