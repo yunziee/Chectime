@@ -1,15 +1,21 @@
+// 책 표시 어댑터
+
 package com.example.chectime
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
-class BookAdapter(private val bookList: List<Book>) : RecyclerView.Adapter<BookAdapter.BookViewHolder>() {
-
+class BookAdapter(
+    private val bookList: List<ApiBook>,
+    private val fragmentManager: FragmentManager // FragmentManager 추가
+) : RecyclerView.Adapter<BookAdapter.BookViewHolder>() {
     // ViewHolder 클래스, RecyclerView 항목을 관리
     class BookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val titleTextView: TextView = itemView.findViewById(R.id.book_title)
@@ -35,6 +41,21 @@ class BookAdapter(private val bookList: List<Book>) : RecyclerView.Adapter<BookA
 
         // 이미지 URL을 가져와 Picasso를 사용해 이미지 로딩
         Picasso.get().load(book.cover).into(holder.imageView)
+
+        // 책 아이템 클릭 시 상세 페이지로 이동
+        holder.itemView.setOnClickListener {
+            val bundle = Bundle().apply {
+                putParcelable("book", book)
+            }
+
+            val fragment = BookDetailFragment().apply {
+                arguments = bundle
+            }
+            fragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     // 전체 아이템 개수를 반환하는 메소드
