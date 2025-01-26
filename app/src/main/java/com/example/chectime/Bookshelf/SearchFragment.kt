@@ -18,7 +18,7 @@ class SearchFragment : Fragment() {
 
     private val apiKey = "ttbwannabe17171929001" // 발급받은 API 키
     private lateinit var bookAdapter: BookAdapter
-    private val books = mutableListOf<Book>()
+    private val books = mutableListOf<ApiBook>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,7 +32,9 @@ class SearchFragment : Fragment() {
         // RecyclerView 설정
         val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        bookAdapter = BookAdapter(books)
+
+        // SearchFragment에서 parentFragmentManager를 전달
+        bookAdapter = BookAdapter(books, requireActivity().supportFragmentManager)
         recyclerView.adapter = bookAdapter
 
         searchButton.setOnClickListener {
