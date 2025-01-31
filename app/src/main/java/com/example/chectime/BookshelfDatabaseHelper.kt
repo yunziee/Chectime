@@ -11,7 +11,7 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
 
     companion object {
         private const val DATABASE_NAME = "bookshelf.db"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
 
         const val TABLE_NAME = "books"
         const val COLUMN_TITLE = "title"
@@ -23,6 +23,12 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
         const val COLUMN_DESCRIPTION = "description"
         const val COLUMN_PRICE = "price"
         const val COLUMN_STATUS = "status" // 독서 상태 추가
+        const val COLUMN_MEMO = "memo" // 메모
+        const val COLUMN_START_DATE = "start_date" // 시작 날짜
+        const val COLUMN_END_DATE = "end_date" // 종료 날짜
+        const val COLUMN_RATING = "rating" // 별점
+        const val COLUMN_CURRENT_PAGE = "current_page" // 현재 페이지
+        const val COLUMN_TOTAL_PAGES = "total_pages" // 현재 페이지
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -37,7 +43,13 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
             $COLUMN_PUB_DATE TEXT,
             $COLUMN_DESCRIPTION TEXT,
             $COLUMN_PRICE TEXT,
-            $COLUMN_STATUS TEXT
+            $COLUMN_STATUS TEXT,
+            $COLUMN_MEMO TEXT,
+            $COLUMN_START_DATE TEXT,
+            $COLUMN_END_DATE TEXT,
+            $COLUMN_RATING FLOAT,
+            $COLUMN_CURRENT_PAGE INT,
+            $COLUMN_TOTAL_PAGES INT
         )
     """.trimIndent()
         db.execSQL(createTableQuery)
@@ -74,6 +86,7 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
 
         for (values in testBooks) {
             db.insert(TABLE_NAME, null, values)
+            Log.d(TAG, "Inserted test book: ISBN = ${values.getAsString(COLUMN_ISBN)}")
         }
     }
 
@@ -95,6 +108,13 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
             put(COLUMN_DESCRIPTION, book.description)
             put(COLUMN_PRICE, book.priceStandard)
             put(COLUMN_STATUS, book.status) // 독서 상태 저장
+            put(COLUMN_MEMO, book.memo)
+            put(COLUMN_START_DATE, book.startDate)
+            put(COLUMN_END_DATE, book.endDate)
+            put(COLUMN_RATING, book.rating)
+            put(COLUMN_CURRENT_PAGE, book.currentPage)
+            put(COLUMN_TOTAL_PAGES, book.totalPages)
+
         }
 
         // ISBN으로 기존 책을 찾아서 업데이트 또는 삽입
@@ -139,55 +159,19 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
                 val description = getString(getColumnIndexOrThrow(COLUMN_DESCRIPTION))
                 val price = getString(getColumnIndexOrThrow(COLUMN_PRICE))
                 val status = getString(getColumnIndexOrThrow(COLUMN_STATUS)) // 독서 상태
+                val startDate = getString(getColumnIndexOrThrow(COLUMN_START_DATE))
+                val endDate = getString(getColumnIndexOrThrow(COLUMN_END_DATE))
+                val memo = getString(getColumnIndexOrThrow(COLUMN_MEMO))
+                val rating = getFloat(getColumnIndexOrThrow(COLUMN_RATING))
+                val currentPage = getInt(getColumnIndexOrThrow(COLUMN_CURRENT_PAGE))
+                val totalPages = getInt(getColumnIndexOrThrow(COLUMN_TOTAL_PAGES))
 
-                books.add(Book(title, author, publisher, cover, isbn, pubDate, description, price, status))
+                books.add(Book(title, author, publisher, cover, isbn, pubDate, description, price, status, memo, startDate, endDate, rating, currentPage, totalPages))
             }
             close()
         }
+
         return books
     }
 
-    // 모든 책 조회
-    fun getAllBooks(): List<Book> {
-        val books = mutableListOf<Book>()
-        val db = readableDatabase
-        val cursor = db.query(
-            TABLE_NAME,
-            null, // 모든 열 선택
-            null, null, null, null, null
-        )
-
-        with(cursor) {
-            while (moveToNext()) {
-                val title = getString(getColumnIndexOrThrow(COLUMN_TITLE))
-                val author = getString(getColumnIndexOrThrow(COLUMN_AUTHOR))
-                val publisher = getString(getColumnIndexOrThrow(COLUMN_PUBLISHER))
-                val cover = getString(getColumnIndexOrThrow(COLUMN_COVER))
-                val isbn = getString(getColumnIndexOrThrow(COLUMN_ISBN))
-                val pubDate = getString(getColumnIndexOrThrow(COLUMN_PUB_DATE))
-                val description = getString(getColumnIndexOrThrow(COLUMN_DESCRIPTION))
-                val price = getString(getColumnIndexOrThrow(COLUMN_PRICE))
-                val status = getString(getColumnIndexOrThrow(COLUMN_STATUS)) // 독서 상태
-
-                books.add(Book(title, author, publisher, cover, isbn, pubDate, description, price, status))
-            }
-            close()
-        }
-        return books
-    }
-
-    // ApiBook을 Book으로 변환하는 메서드
-    fun convertApiBookToBook(apiBook: ApiBook): Book {
-        return Book(
-            title = apiBook.title,
-            author = apiBook.author,
-            publisher = apiBook.publisher,
-            cover = apiBook.cover,
-            isbn = apiBook.isbn,
-            pubDate = apiBook.pubDate,
-            description = apiBook.description,
-            priceStandard = apiBook.priceStandard,
-            status = apiBook.status
-        )
-    }
 }

@@ -66,17 +66,6 @@ class BookshelfFragment : Fragment() {
         return view
     }
 
-    // 책 저장 후 데이터 반영
-    fun saveBookAndRefresh(book: Book) {
-        bookshelfDatabaseHelper.addOrUpdateBook(book)
-        Log.d("saveBookAndRefresh", "Book saved: ${book.title}")
-
-        // 저장 후 각 탭 새로고침
-        refreshTab("read", "f0") // 독서 완료
-        refreshTab("reading", "f1") // 독서 중
-        refreshTab("toRead", "f2") // 독서 예정
-    }
-
     // 특정 상태의 책 목록을 탭에 반영
     private fun refreshTab(status: String, fragmentTag: String) {
         val newBooks = bookshelfDatabaseHelper.getBooksByStatus(status)
@@ -139,7 +128,18 @@ class BookshelfTabFragment : Fragment() {
 
         // RecyclerView에 어댑터 연결
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
-        val adapter = BooksAdapter(books)
+        val adapter = BooksAdapter(books) { book ->
+            // 책 클릭 시 SavedBookFragment로 이동하는 동작
+            val transaction = requireActivity().supportFragmentManager.beginTransaction() // activity에서 FragmentManager 사용
+            val savedBookFragment = SavedBookFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable("book", book) // 클릭한 책 전달
+                }
+            }
+            transaction.replace(R.id.fragment_container, savedBookFragment) // 정확한 컨테이너 뷰 ID 사용
+            transaction.addToBackStack(null) // 뒤로 가기 스택에 추가
+            transaction.commit() // 트랜잭션 커밋
+        }
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 

@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
-class BooksAdapter(private var books: List<Book>) : RecyclerView.Adapter<BooksAdapter.BookViewHolder>() {
+class BooksAdapter(private var books: List<Book>, private val onBookClick: (Book) -> Unit) : RecyclerView.Adapter<BooksAdapter.BookViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_book, parent, false)
@@ -42,6 +42,10 @@ class BooksAdapter(private var books: List<Book>) : RecyclerView.Adapter<BooksAd
             publisherTextView.text = book.publisher
             isbnTextView.text = book.isbn
             Picasso.get().load(book.cover).into(coverImageView)
+            itemView.setOnClickListener {
+                // 책 클릭 시 onBookClick 실행
+                onBookClick(book)
+            }
         }
     }
 }

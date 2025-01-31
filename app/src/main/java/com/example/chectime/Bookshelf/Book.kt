@@ -12,10 +12,15 @@ data class Book(
     val pubDate: String?,
     val description: String?,
     val priceStandard: String?,
-    val status: String?
+    val status: String?,
+    val memo: String?,
+    val startDate: String?,
+    val endDate: String?,
+    val rating: Float?,
+    val currentPage: Int,
+    val totalPages: Int
 ) : Parcelable {
 
-    // ApiBook에서 Book으로 변환하는 생성자
     constructor(apiBook: ApiBook) : this(
         title = apiBook.title,
         author = apiBook.author,
@@ -25,10 +30,15 @@ data class Book(
         pubDate = apiBook.pubDate,
         description = apiBook.description,
         priceStandard = apiBook.priceStandard,
-        status = apiBook.status
+        status = apiBook.status,
+        memo = "",
+        rating = null,
+        startDate = null,
+        endDate = null,
+        currentPage = 0,
+        totalPages = 0
     )
 
-    // 기존 Parcelable 구현
     constructor(parcel: Parcel) : this(
         title = parcel.readString(),
         author = parcel.readString(),
@@ -38,7 +48,13 @@ data class Book(
         pubDate = parcel.readString(),
         description = parcel.readString(),
         priceStandard = parcel.readString(),
-        status = parcel.readString()
+        status = parcel.readString(),
+        memo = parcel.readString(),
+        startDate = parcel.readString(),
+        endDate = parcel.readString(),
+        rating = parcel.readFloat(),
+        currentPage = parcel.readInt(),
+        totalPages = parcel.readInt()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -51,6 +67,7 @@ data class Book(
         parcel.writeString(description)
         parcel.writeString(priceStandard)
         parcel.writeString(status)
+        parcel.writeValue(rating)  // 평점 저장
     }
 
     override fun describeContents(): Int {
