@@ -6,12 +6,15 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
         private const val DATABASE_NAME = "bookshelf.db"
-        private const val DATABASE_VERSION = 2
+        private const val DATABASE_VERSION = 3
 
         const val TABLE_NAME = "books"
         const val COLUMN_TITLE = "title"
@@ -28,7 +31,12 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
         const val COLUMN_END_DATE = "end_date" // 종료 날짜
         const val COLUMN_RATING = "rating" // 별점
         const val COLUMN_CURRENT_PAGE = "current_page" // 현재 페이지
-        const val COLUMN_TOTAL_PAGES = "total_pages" // 현재 페이지
+        const val COLUMN_TOTAL_PAGES = "total_pages" // 전체 페이지
+
+        const val COLUMN_TIMER_DURATION = "timer_duration" // 타이머 지속 시간 (초 단위)
+        const val TIMER_TABLE_NAME = "timer_records"
+        const val COLUMN_TIMER_ID = "timer_id"
+        const val COLUMN_TIMER_DATE = "timer_date"
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -53,6 +61,19 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
         )
     """.trimIndent()
         db.execSQL(createTableQuery)
+
+        // 타이머 기록을 위한 테이블 생성
+        val createTimerTableQuery = """
+        CREATE TABLE $TIMER_TABLE_NAME (
+            $COLUMN_TIMER_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+            $COLUMN_ISBN TEXT,
+            $COLUMN_TIMER_DATE TEXT,  -- 타이머 실행 날짜
+            $COLUMN_TIMER_DURATION INTEGER,  -- 지속 시간 (초 단위)
+            FOREIGN KEY ($COLUMN_ISBN) REFERENCES books($COLUMN_ISBN)
+        )
+        """.trimIndent()
+
+        db.execSQL(createTimerTableQuery)
 
         // 테스트 데이터 삽입
         addTestData(db)
@@ -91,8 +112,14 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
-        onCreate(db)
+        if (oldVersion < 3) {
+            db.execSQL("CREATE TABLE IF NOT EXISTS $TIMER_TABLE_NAME (" +
+                    "$COLUMN_TIMER_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "$COLUMN_ISBN TEXT, " +
+                    "$COLUMN_TIMER_DATE TEXT, " +
+                    "$COLUMN_TIMER_DURATION INTEGER, " +
+                    "FOREIGN KEY ($COLUMN_ISBN) REFERENCES books($COLUMN_ISBN))")
+        }
     }
 
     // 책 추가 & 업데이트
@@ -114,7 +141,6 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
             put(COLUMN_RATING, book.rating)
             put(COLUMN_CURRENT_PAGE, book.currentPage)
             put(COLUMN_TOTAL_PAGES, book.totalPages)
-
         }
 
         // ISBN으로 기존 책을 찾아서 업데이트 또는 삽입
@@ -174,4 +200,95 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
         return books
     }
 
+    // 타이머 기록 추가
+    fun addOrUpdateTimerRecord(isbn: String, date: String, additionalDurationInSeconds: Long) {
+        val db = writableDatabase
+
+        // 동일한 책(ISBN)과 날짜(date)에 대한 기존 타이머 기록 조회
+        val cursor = db.query(
+            TIMER_TABLE_NAME,
+            arrayOf(COLUMN_TIMER_ID, COLUMN_TIMER_DURATION),  // TIMER_ID와 DURATION만 가져옴
+            "$COLUMN_ISBN = ? AND $COLUMN_TIMER_DATE = ?",  // ISBN과 날짜로 필터링
+            arrayOf(isbn, date),
+            null, null, null
+        )
+
+        if (cursor.moveToFirst()) {
+            // 기존 기록이 있으면, 그 기록의 타이머 시간에 추가 시간을 더함
+            val existingDuration = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_TIMER_DURATION))
+            val updatedDuration = existingDuration + additionalDurationInSeconds
+
+            // 업데이트 쿼리
+            val values = ContentValues().apply {
+                put(COLUMN_TIMER_DURATION, updatedDuration)
+            }
+
+            // 해당 기록을 업데이트
+            val rowsAffected = db.update(
+                TIMER_TABLE_NAME,
+                values,
+                "$COLUMN_ISBN = ? AND $COLUMN_TIMER_DATE = ?", // ISBN과 날짜로 찾기
+                arrayOf(isbn, date)
+            )
+
+            Log.d(TAG, "Timer updated for ISBN: $isbn on $date, Updated Duration: $updatedDuration seconds")
+
+            if (rowsAffected == 0) {
+                Log.d(TAG, "Failed to update timer.")
+            }
+        } else {
+            // 기록이 없으면, 새로운 타이머 기록을 추가
+            val values = ContentValues().apply {
+                put(COLUMN_ISBN, isbn)
+                put(COLUMN_TIMER_DATE, date)
+                put(COLUMN_TIMER_DURATION, additionalDurationInSeconds)
+            }
+
+            // 새로운 기록 삽입
+            db.insert(TIMER_TABLE_NAME, null, values)
+            Log.d(TAG, "New timer record inserted for ISBN: $isbn on $date, Duration: $additionalDurationInSeconds seconds")
+        }
+
+        cursor.close()
+    }
+
+
+    // 오늘 날짜를 반환하는 함수
+    private fun getCurrentDate(): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return sdf.format(Date())
+    }
+
+    // 특정 책의 날짜별 타이머 기록 조회
+    fun getTimerRecordsByBook(isbn: String): List<TimerRecord> {
+        val records = mutableListOf<TimerRecord>()
+        val db = readableDatabase
+        val cursor = db.query(
+            TIMER_TABLE_NAME,
+            null,
+            "$COLUMN_ISBN = ?",
+            arrayOf(isbn),
+            null, null, "$COLUMN_TIMER_DATE DESC"
+        )
+
+        with(cursor) {
+            while (moveToNext()) {
+                val timerId = getLong(getColumnIndexOrThrow(COLUMN_TIMER_ID))
+                val timerDate = getString(getColumnIndexOrThrow(COLUMN_TIMER_DATE))
+                val duration = getInt(getColumnIndexOrThrow(COLUMN_TIMER_DURATION))
+
+                records.add(TimerRecord(timerId, isbn, timerDate, duration))
+            }
+            close()
+        }
+
+        return records
+    }
 }
+
+data class TimerRecord(
+    val timerId: Long,
+    val isbn: String,
+    val timerDate: String,
+    val duration: Int
+)

@@ -54,7 +54,7 @@ data class Book(
         endDate = parcel.readString(),
         rating = parcel.readFloat(),
         currentPage = parcel.readInt(),
-        totalPages = parcel.readInt()
+        totalPages = parcel.readInt(),
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

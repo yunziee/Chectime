@@ -1,42 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center">
 
+    <!-- 현재 읽고 있는 책 텍스트 -->
+
+    <!-- Spinner로 책 선택 -->
+    <TextView
+        android:id="@+id/tm_book"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="지금 읽고 있는 책은"
+        android:textSize="35sp" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:textSize="20sp"
+        android:layout_marginBottom="32dp"/>
+
+    <!-- 타이머 텍스트 -->
     <TextView
         android:id="@+id/tvTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="00:00:00"
         android:textSize="40sp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp" />
+        android:layout_marginBottom="32dp"/>
 
-    <Button
-        android:id="@+id/btnStart"
+    <!-- 타이머 버튼들을 가로로 배치 -->
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start"
-        android:layout_below="@id/tvTimer"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp" />
+        android:gravity="center"
+        android:layout_marginBottom="32dp">
 
+        <!-- 타이머 시작 버튼 -->
+        <Button
+            android:id="@+id/btnStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start"
+            android:layout_marginEnd="16dp"/>
+
+        <!-- 타이머 정지 버튼 -->
+        <Button
+            android:id="@+id/btnStop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop"
+            android:layout_marginEnd="16dp"/>
+
+        <!-- 타이머 리셋 버튼 -->
+        <Button
+            android:id="@+id/btnReset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reset"/>
+    </LinearLayout>
+
+    <!-- 저장 버튼 -->
     <Button
-        android:id="@+id/btnStop"
+        android:id="@+id/btnSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Stop"
-        android:layout_below="@id/btnStart"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp" />
+        android:text="저장"
+        android:layout_marginTop="16dp"/>
 
-    <Button
-        android:id="@+id/btnReset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Reset"
-        android:layout_below="@id/btnStop"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp" />
-
-</RelativeLayout>
+</LinearLayout>

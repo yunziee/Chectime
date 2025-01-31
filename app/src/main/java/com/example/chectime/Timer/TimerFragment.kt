@@ -1,95 +1,146 @@
 package com.example.chectime
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.os.CountDownTimer
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import java.text.SimpleDateFormat
+import java.util.*
 
 class TimerFragment : Fragment() {
 
-    private lateinit var tvTimer: TextView
-    private lateinit var btnStart: Button
-    private lateinit var btnStop: Button
-    private lateinit var btnReset: Button
-
-    private var seconds = 0 // 총 초
-    private var running = false
-    private var wasRunning = false
-
-    private val handler = Handler(Looper.getMainLooper())
+    private lateinit var startButton: Button
+    private lateinit var stopButton: Button
+    private lateinit var resetButton: Button
+    private lateinit var saveButton: Button
+    private lateinit var timerTextView: TextView
+    private lateinit var statusSpinner: Spinner
+    private var countDownTimer: CountDownTimer? = null
+    private var isTimerRunning = false
+    private var seconds: Long = 0
+    private lateinit var databaseHelper: BookshelfDatabaseHelper
+    private lateinit var currentBook: Book
+    private lateinit var bookList: List<Book> // 책 목록을 저장할 변수
 
     override fun onCreateView(
-
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
-        // 프래그먼트의 UI를 정의할 레이아웃 설정
-        val view = inflater.inflate(R.layout.fragment_timer, container, false)
+        val binding = inflater.inflate(R.layout.fragment_timer, container, false)
 
-        tvTimer = view.findViewById(R.id.tvTimer)
-        btnStart = view.findViewById(R.id.btnStart)
-        btnStop = view.findViewById(R.id.btnStop)
-        btnReset = view.findViewById(R.id.btnReset)
+        // 버튼 및 텍스트 뷰 초기화
+        startButton = binding.findViewById(R.id.btnStart)
+        stopButton = binding.findViewById(R.id.btnStop)
+        resetButton = binding.findViewById(R.id.btnReset)
+        saveButton = binding.findViewById(R.id.btnSave)
+        timerTextView = binding.findViewById(R.id.tvTimer)
+        statusSpinner = binding.findViewById(R.id.spinner)
 
-        // 상태 복구 (화면 회전 등)
-        savedInstanceState?.let {
-            seconds = it.getInt("seconds")
-            running = it.getBoolean("running")
-            wasRunning = it.getBoolean("wasRunning")
-        }
+        // Database Helper 초기화
+        databaseHelper = BookshelfDatabaseHelper(requireContext())
 
-        // 시작 버튼
-        btnStart.setOnClickListener {
-            running = true
-        }
+        // 현재 읽고 있는 책 목록을 DB에서 가져오기
+        loadReadingBooks()
 
-        // 정지 버튼
-        btnStop.setOnClickListener {
-            running = false
-        }
+        // 스피너에 책 목록을 설정
+        val bookTitles = bookList.map { it.title } // 책 제목 목록
+        val bookAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, bookTitles)
+        bookAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        statusSpinner.adapter = bookAdapter
 
-        // 초기화 버튼
-        btnReset.setOnClickListener {
-            running = false
-            seconds = 0
-            updateTimer()
-        }
-
-        runTimer()
-
-        return view
-
-    }
-
-    private fun runTimer() {
-        handler.post(object : Runnable {
-            override fun run() {
-                if (running) {
-                    seconds++
-                }
-                updateTimer()
-                handler.postDelayed(this, 1000)
+        // 타이머 시작 버튼 클릭 리스너
+        startButton.setOnClickListener {
+            if (!isTimerRunning) {
+                startTimer()
             }
-        })
+        }
+
+        // 타이머 정지 버튼 클릭 리스너
+        stopButton.setOnClickListener {
+            if (isTimerRunning) {
+                stopTimer()
+            }
+        }
+
+        // 타이머 리셋 버튼 클릭 리스너
+        resetButton.setOnClickListener {
+            resetTimer()
+        }
+
+        // 타이머 저장 버튼 클릭 리스너
+        saveButton.setOnClickListener {
+            saveTimerRecord()
+        }
+
+        return binding
     }
 
-    private fun updateTimer() {
-        val hours = seconds / 3600
-        val minutes = (seconds % 3600) / 60
-        val secs = seconds % 60
-
-        val time = String.format("%02d:%02d:%02d", hours, minutes, secs)
-        tvTimer.text = time
+    // 현재 읽고 있는 책을 DB에서 가져오는 함수
+    private fun loadReadingBooks() {
+        bookList = databaseHelper.getBooksByStatus("reading") // 'reading' 상태인 책만 불러오기
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("seconds", seconds)
-        outState.putBoolean("running", running)
-        outState.putBoolean("wasRunning", wasRunning)
+    private fun startTimer() {
+        isTimerRunning = true
+        startButton.text = "타이머 진행 중..."
+        stopButton.isEnabled = true
+        resetButton.isEnabled = false
+        saveButton.isEnabled = false
+
+        countDownTimer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                seconds++
+                timerTextView.text = DateUtils.formatElapsedTime(seconds)
+            }
+
+            override fun onFinish() {}
+        }.start()
+    }
+
+    private fun stopTimer() {
+        countDownTimer?.cancel()
+        isTimerRunning = false
+        startButton.text = "Start"
+        stopButton.isEnabled = false
+        resetButton.isEnabled = true
+        saveButton.isEnabled = true
+    }
+
+    private fun resetTimer() {
+        seconds = 0
+        timerTextView.text = "00:00:00"
+        startButton.text = "Start"
+        stopButton.isEnabled = false
+        resetButton.isEnabled = false
+        saveButton.isEnabled = false
+    }
+
+    private fun saveTimerRecord() {
+        val timerDurationInSeconds = seconds
+        val timerDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+
+        // 스피너에서 선택된 책을 가져옴
+        val selectedBookTitle = statusSpinner.selectedItem.toString()
+        val selectedBook = bookList.find { it.title == selectedBookTitle }
+
+        selectedBook?.let {
+            // 타이머 기록을 DB에 저장 (isbn과 날짜 기준으로)
+            it.isbn?.let { it1 -> databaseHelper.addOrUpdateTimerRecord(it1, timerDate, timerDurationInSeconds) }
+
+            // 타이머 저장 후 초기화
+            resetTimer()
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        countDownTimer?.cancel()
     }
 }
