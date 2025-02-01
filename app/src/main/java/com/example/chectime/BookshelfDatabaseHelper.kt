@@ -67,6 +67,7 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
         CREATE TABLE $TIMER_TABLE_NAME (
             $COLUMN_TIMER_ID INTEGER PRIMARY KEY AUTOINCREMENT,
             $COLUMN_ISBN TEXT,
+            $COLUMN_TITLE TEXT,
             $COLUMN_TIMER_DATE TEXT,  -- 타이머 실행 날짜
             $COLUMN_TIMER_DURATION INTEGER,  -- 지속 시간 (초 단위)
             FOREIGN KEY ($COLUMN_ISBN) REFERENCES books($COLUMN_ISBN)
@@ -91,6 +92,13 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
                 put(COLUMN_DESCRIPTION, "2019년 『천 개의 파랑』으로 한국과학문학상 장편 대상을 수상하며 혜성같이 등장해 한국 SF의 눈부신 미래를 만들고 있는 작가 천선란 의 세 번째. 『노랜드』 이후 2년 만에 묶는 소설집으로 미발표작 두 편을 포함해 2020년부터 2024년까지 쓴 단편 여덟 편이 수록되어 있다.")
                 put(COLUMN_PRICE, "17000")
                 put(COLUMN_STATUS, "read")
+                put(COLUMN_MEMO, "책이 조금 어려웠지만 SF는 늘 재미있다 ㅎㅎ")
+                put(COLUMN_START_DATE, "2025-01-21")
+                put(COLUMN_END_DATE, "2025-01-24")
+                put(COLUMN_RATING, 4.0)
+                put(COLUMN_CURRENT_PAGE, 321)
+                put(COLUMN_TOTAL_PAGES, 321)
+
             },
             ContentValues().apply {
                 put(COLUMN_ISBN, "8954651135")
@@ -102,6 +110,22 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
                 put(COLUMN_DESCRIPTION, "2018년 봄, 한강 작가의 소설 흰을 새롭게 선보인다. 이 년 전 오월에 세상에 나와 빛의 겹겹 오라기로 둘러싸인 적 있던 그 &lt;흰&gt;에 새 옷을 입히게 된 건 소설 발간에 즈음해 행했던 작가의 퍼포먼스가 글과 함께 배었으면 하는 바람에서였다.")
                 put(COLUMN_PRICE, "14500")
                 put(COLUMN_STATUS, "reading")
+                put(COLUMN_MEMO, "2월 안으로는 꼭 전부 읽어야지")
+                put(COLUMN_START_DATE, "2025-01-29")
+                put(COLUMN_CURRENT_PAGE, 85)
+                put(COLUMN_TOTAL_PAGES, 196)
+            },
+            ContentValues().apply {
+                put(COLUMN_ISBN, "K462930652")
+                put(COLUMN_TITLE, "입속 지느러미")
+                put(COLUMN_AUTHOR, "조예은 (지은이)")
+                put(COLUMN_PUBLISHER, "한겨레출판")
+                put(COLUMN_COVER, "https://image.aladin.co.kr/product/34002/54/coversum/k462930652_1.jpg")
+                put(COLUMN_PUB_DATE, "2024-05-30")
+                put(COLUMN_DESCRIPTION, "제2회 황금가지 타임리프 소설 공모전에서 〈오버랩 나이프, 나이프〉로 우수상을 받으며 작품 활동을 시작한 조예은 작가가 신작 소설《입속 지느러미》로 야심 차게 돌아왔다. 인어 이야기와 세이렌 신화를 결합해 잔혹하지만 아련하고 서글프지만 사랑스러운 서사로 독자를 새롭게 만난다.")
+                put(COLUMN_PRICE, "15000")
+                put(COLUMN_STATUS, "toRead")
+                put(COLUMN_MEMO, "여름 장마철에 꼭 읽고 싶은 책")
             }
         )
 
@@ -201,56 +225,46 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
     }
 
     // 타이머 기록 추가
-    fun addOrUpdateTimerRecord(isbn: String, date: String, additionalDurationInSeconds: Long) {
+    fun addOrUpdateTimerRecord(isbn: String, title: String, date: String, duration: Long) {
         val db = writableDatabase
 
-        // 동일한 책(ISBN)과 날짜(date)에 대한 기존 타이머 기록 조회
-        val cursor = db.query(
-            TIMER_TABLE_NAME,
-            arrayOf(COLUMN_TIMER_ID, COLUMN_TIMER_DURATION),  // TIMER_ID와 DURATION만 가져옴
-            "$COLUMN_ISBN = ? AND $COLUMN_TIMER_DATE = ?",  // ISBN과 날짜로 필터링
-            arrayOf(isbn, date),
-            null, null, null
+        // 기존에 같은 날짜, 같은 책의 기록이 있는지 확인
+        val cursor = db.rawQuery(
+            "SELECT $COLUMN_TIMER_DURATION FROM $TIMER_TABLE_NAME WHERE $COLUMN_ISBN = ? AND $COLUMN_TIMER_DATE = ?",
+            arrayOf(isbn, date)
         )
 
         if (cursor.moveToFirst()) {
-            // 기존 기록이 있으면, 그 기록의 타이머 시간에 추가 시간을 더함
-            val existingDuration = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_TIMER_DURATION))
-            val updatedDuration = existingDuration + additionalDurationInSeconds
+            // 기존 기록이 있다면 시간 업데이트 (더하기)
+            val existingDuration = cursor.getInt(0)
+            val newDuration = existingDuration + duration
 
-            // 업데이트 쿼리
             val values = ContentValues().apply {
-                put(COLUMN_TIMER_DURATION, updatedDuration)
+                put(COLUMN_TIMER_DURATION, newDuration)
+                put(COLUMN_TITLE, title) // 제목 업데이트
             }
 
-            // 해당 기록을 업데이트
-            val rowsAffected = db.update(
-                TIMER_TABLE_NAME,
-                values,
-                "$COLUMN_ISBN = ? AND $COLUMN_TIMER_DATE = ?", // ISBN과 날짜로 찾기
+            db.update(
+                TIMER_TABLE_NAME, values,
+                "$COLUMN_ISBN = ? AND $COLUMN_TIMER_DATE = ?",
                 arrayOf(isbn, date)
             )
-
-            Log.d(TAG, "Timer updated for ISBN: $isbn on $date, Updated Duration: $updatedDuration seconds")
-
-            if (rowsAffected == 0) {
-                Log.d(TAG, "Failed to update timer.")
-            }
         } else {
-            // 기록이 없으면, 새로운 타이머 기록을 추가
+            // 기록이 없으면 새로 삽입
             val values = ContentValues().apply {
                 put(COLUMN_ISBN, isbn)
+                put(COLUMN_TITLE, title) // 제목도 저장
                 put(COLUMN_TIMER_DATE, date)
-                put(COLUMN_TIMER_DURATION, additionalDurationInSeconds)
+                put(COLUMN_TIMER_DURATION, duration)
             }
 
-            // 새로운 기록 삽입
             db.insert(TIMER_TABLE_NAME, null, values)
-            Log.d(TAG, "New timer record inserted for ISBN: $isbn on $date, Duration: $additionalDurationInSeconds seconds")
         }
 
         cursor.close()
+        db.close()
     }
+
 
 
     // 오늘 날짜를 반환하는 함수

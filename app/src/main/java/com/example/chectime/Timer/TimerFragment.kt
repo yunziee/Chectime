@@ -130,13 +130,15 @@ class TimerFragment : Fragment() {
         val selectedBookTitle = statusSpinner.selectedItem.toString()
         val selectedBook = bookList.find { it.title == selectedBookTitle }
 
-        selectedBook?.let {
-            // 타이머 기록을 DB에 저장 (isbn과 날짜 기준으로)
-            it.isbn?.let { it1 -> databaseHelper.addOrUpdateTimerRecord(it1, timerDate, timerDurationInSeconds) }
-
-            // 타이머 저장 후 초기화
-            resetTimer()
+        selectedBook?.let { book ->
+            book.isbn?.let { isbn ->
+                book.title?.let { title ->
+                    databaseHelper.addOrUpdateTimerRecord(isbn, title, timerDate, timerDurationInSeconds)
+                    resetTimer() // 타이머 초기화
+                }
+            }
         }
+
     }
 
     override fun onDestroyView() {
