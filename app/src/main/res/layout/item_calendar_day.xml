@@ -16,8 +16,8 @@
     <!-- 날짜 강조 원 (날짜 텍스트 위에 겹치도록) -->
     <View
         android:id="@+id/highlightCircle"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:background="@drawable/highlight_circle"
         android:layout_gravity="center"
         android:visibility="gone"
