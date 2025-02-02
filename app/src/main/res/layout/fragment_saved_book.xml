@@ -175,20 +175,20 @@
             android:layout_marginBottom="65dp">
 
             <Button
-                android:id="@+id/btn_reading"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="읽고 있어요"
-                android:layout_margin="5dp"
-                android:textSize="12dp" />
-
-            <Button
                 android:id="@+id/btn_read"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="다 읽었어요"
+                android:layout_margin="5dp"
+                android:textSize="12dp" />
+
+            <Button
+                android:id="@+id/btn_reading"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="읽고 있어요"
                 android:layout_margin="5dp"
                 android:textSize="12dp" />
 
