@@ -1,0 +1,33 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center">
+
+    <!-- 날짜 텍스트 (맨 위에 위치) -->
+    <TextView
+        android:id="@+id/dateText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="#000000"
+        android:visibility="visible"
+        android:layout_gravity="center" />
+
+    <!-- 날짜 강조 원 (날짜 텍스트 위에 겹치도록) -->
+    <View
+        android:id="@+id/highlightCircle"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@drawable/highlight_circle"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:alpha="0.5" /> <!-- 투명도 조절 -->
+
+    <!-- 책 표지 -->
+    <ImageView
+        android:id="@+id/bookCover"
+        android:layout_width="50dp"
+        android:layout_height="75dp"
+        android:visibility="gone"
+        android:layout_gravity="center" />
+</FrameLayout>

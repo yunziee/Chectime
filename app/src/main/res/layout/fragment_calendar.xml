@@ -1,144 +1,60 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="@android:color/white">
-    <!--    앱 실행시 달력이 보여지는 화면레이아웃-->
-    <!-- 상단 제목 -->
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="N월의 독서"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:paddingBottom="16dp" />
+    android:orientation="vertical">
 
-    <!-- 달력의 이전/다음 월 버튼 -->
+    <TextView
+        android:id="@+id/calendarGoalTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="나의 독서 달력"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:padding="8dp"
+        android:textStyle="bold"
+        android:layout_marginVertical="15dp"/>
+
     <LinearLayout
-        android:id="@+id/monthNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center"
-        android:padding="8dp"
-        android:layout_below="@id/tvTitle">
+        android:gravity="center">
 
         <ImageButton
-            android:id="@+id/btnPrevMonth"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:contentDescription="Previous Month"
-            android:src="@drawable/baseline_arrow_left_24" />
-
-        <TextView
-            android:id="@+id/tvMonthYear"
+            android:id="@+id/prevMonthButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:text="January 2025"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:gravity="center" />
+            android:src="@drawable/ic_arrow_left"
+            android:contentDescription="Previous Month"/>
+
+        <TextView
+            android:id="@+id/monthYearTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2025 February"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
         <ImageButton
-            android:id="@+id/btnNextMonth"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/baseline_arrow_right_24"
-            android:background="@android:color/transparent"
-            android:contentDescription="Next Month" />
+            android:id="@+id/nextMonthButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_right"
+            android:contentDescription="Next Month"/>
     </LinearLayout>
 
-    <!-- 요일 헤더 -->
     <LinearLayout
-        android:id="@+id/weekdayHeader"
+        android:id="@+id/weekdaysLayout"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="7"
-        android:paddingBottom="8dp"
-        android:layout_below="@id/monthNavigation">
+        android:gravity="center"
+        android:padding="10dp"
+        android:layout_marginTop="10dp" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="월"
-            android:textSize="14sp"
-            android:gravity="center" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="화"
-            android:textSize="14sp"
-            android:gravity="center" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="수"
-            android:textSize="14sp"
-            android:gravity="center" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="목"
-            android:textSize="14sp"
-            android:gravity="center" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="금"
-            android:textSize="14sp"
-            android:gravity="center" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="토"
-            android:textSize="14sp"
-            android:textColor="@android:color/holo_blue_dark"
-            android:gravity="center" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="일"
-            android:textSize="14sp"
-            android:textColor="@android:color/holo_red_dark"
-            android:gravity="center" />
-    </LinearLayout>
-
-    <!-- 달력을 표시하는 RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/calendarRecyclerView"
-        android:layout_width="391dp"
-        android:layout_height="339dp"
-        android:layout_below="@id/weekdayHeader"
-        android:paddingTop="16dp" />
-
-    <!-- 성공률 -->
-    <TextView
-        android:id="@+id/tvSuccessRate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/calendarRecyclerView"
-        android:layout_centerHorizontal="true"
-        android:text="오늘까지 성공률 85%"
-        android:textSize="20sp" />
-
-</RelativeLayout>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+</LinearLayout>

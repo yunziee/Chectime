@@ -65,12 +65,11 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
         // 타이머 기록을 위한 테이블 생성
         val createTimerTableQuery = """
         CREATE TABLE $TIMER_TABLE_NAME (
-            $COLUMN_TIMER_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+            $COLUMN_TIMER_ID INTEGER PRIMARY KEY,
             $COLUMN_ISBN TEXT,
             $COLUMN_TITLE TEXT,
             $COLUMN_TIMER_DATE TEXT,  -- 타이머 실행 날짜
-            $COLUMN_TIMER_DURATION INTEGER,  -- 지속 시간 (초 단위)
-            FOREIGN KEY ($COLUMN_ISBN) REFERENCES books($COLUMN_ISBN)
+            $COLUMN_TIMER_DURATION INTEGER  -- 지속 시간 (초 단위)
         )
         """.trimIndent()
 
@@ -224,6 +223,21 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
         return books
     }
 
+    // 'read' 상태인 책들의 표지 URL을 가져오는 함수
+    fun getReadBooks(): List<Book> {
+        val readBooks = mutableListOf<Book>()
+        val books = getBooksByStatus("read") // 'read' 상태의 책들 가져오기
+
+        for (book in books) {
+            if (book.endDate != null && book.cover != null) {
+                readBooks.add(book) // 끝난 날짜와 표지가 있는 책만 추가
+            }
+        }
+
+        return readBooks
+    }
+
+
     // 타이머 기록 추가
     fun addOrUpdateTimerRecord(isbn: String, title: String, date: String, duration: Long) {
         val db = writableDatabase
@@ -241,7 +255,6 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
 
             val values = ContentValues().apply {
                 put(COLUMN_TIMER_DURATION, newDuration)
-                put(COLUMN_TITLE, title) // 제목 업데이트
             }
 
             db.update(
@@ -253,7 +266,7 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
             // 기록이 없으면 새로 삽입
             val values = ContentValues().apply {
                 put(COLUMN_ISBN, isbn)
-                put(COLUMN_TITLE, title) // 제목도 저장
+                put(COLUMN_TITLE, title)
                 put(COLUMN_TIMER_DATE, date)
                 put(COLUMN_TIMER_DURATION, duration)
             }
@@ -267,42 +280,101 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
 
 
 
-    // 오늘 날짜를 반환하는 함수
-    private fun getCurrentDate(): String {
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        return sdf.format(Date())
-    }
-
-    // 특정 책의 날짜별 타이머 기록 조회
-    fun getTimerRecordsByBook(isbn: String): List<TimerRecord> {
+    // 날짜별 타이머 기록 조회
+    fun getTimerRecordsForDate(date: String): List<TimerRecord> {
         val records = mutableListOf<TimerRecord>()
         val db = readableDatabase
         val cursor = db.query(
             TIMER_TABLE_NAME,
             null,
-            "$COLUMN_ISBN = ?",
-            arrayOf(isbn),
-            null, null, "$COLUMN_TIMER_DATE DESC"
+            "$COLUMN_TIMER_DATE = ?", // 날짜로 필터링
+            arrayOf(date),
+            null, null, null
         )
 
         with(cursor) {
             while (moveToNext()) {
                 val timerId = getLong(getColumnIndexOrThrow(COLUMN_TIMER_ID))
+                val isbn = getString(getColumnIndexOrThrow(COLUMN_ISBN))
+                val title = getString(getColumnIndexOrThrow(COLUMN_TITLE))
                 val timerDate = getString(getColumnIndexOrThrow(COLUMN_TIMER_DATE))
-                val duration = getInt(getColumnIndexOrThrow(COLUMN_TIMER_DURATION))
+                val duration = getInt(getColumnIndexOrThrow(COLUMN_TIMER_DURATION)) // 독서 시간
 
-                records.add(TimerRecord(timerId, isbn, timerDate, duration))
+                records.add(TimerRecord(timerId, isbn, title, timerDate, duration))
+                Log.d("ReadingLog", "TimerRecord: title=$title, duration=$duration")
+
             }
             close()
         }
 
         return records
     }
+
+
+    // 날짜별로 타이머 기록이 있는지 확인해서 반환
+    fun getReadingLogs(): Set<String> {
+        val readingLogs = mutableSetOf<String>() // 날짜만 저장할 Set
+
+        val db = readableDatabase
+
+        // 타이머 기록을 조회
+        val cursor = db.query(
+            TIMER_TABLE_NAME, // 타이머 기록 테이블
+            arrayOf(COLUMN_TIMER_DATE), // 날짜만 조회
+            null, null, null, null, null // 그룹화나 정렬은 필요없음
+        )
+
+        with(cursor) {
+            while (moveToNext()) {
+                val timerDate = getString(getColumnIndexOrThrow(COLUMN_TIMER_DATE)) // 날짜
+                readingLogs.add(timerDate) // 날짜만 Set에 추가
+            }
+            close()
+        }
+
+        return readingLogs // 타이머 기록이 있는 날짜들의 Set 반환
+    }
+
+    fun getReadBooksCountForMonth(yearMonth: String): Int {
+        val db = readableDatabase
+        val query = """
+        SELECT COUNT(DISTINCT isbn) FROM books 
+        WHERE status = 'read' 
+        AND strftime('%Y-%m', read_date) = ?
+    """
+        val cursor = db.rawQuery(query, arrayOf(yearMonth))
+        var count = 0
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0)
+        }
+        cursor.close()
+        db.close()
+        return count
+    }
+
+    fun getReadingDaysCountForMonth(yearMonth: String): Int {
+        val db = readableDatabase
+        val query = """
+        SELECT COUNT(DISTINCT timer_date) FROM timer_table 
+        WHERE strftime('%Y-%m', timer_date) = ?
+    """
+        val cursor = db.rawQuery(query, arrayOf(yearMonth))
+        var count = 0
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0)
+        }
+        cursor.close()
+        db.close()
+        return count
+    }
+
+
 }
 
 data class TimerRecord(
     val timerId: Long,
     val isbn: String,
+    val title: String,
     val timerDate: String,
     val duration: Int
 )

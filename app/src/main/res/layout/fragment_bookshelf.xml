@@ -31,7 +31,7 @@
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#B3CAB4" />
+        android:background="#F6CC71" />
 
     <!-- ViewPager2 for switching content between tabs -->
     <androidx.viewpager2.widget.ViewPager2
