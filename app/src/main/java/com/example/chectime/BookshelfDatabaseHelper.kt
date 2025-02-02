@@ -6,9 +6,6 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
@@ -76,62 +73,9 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
         db.execSQL(createTimerTableQuery)
 
         // 테스트 데이터 삽입
-        addTestData(db)
-    }
-
-    private fun addTestData(db: SQLiteDatabase) {
-        val testBooks = listOf(
-            ContentValues().apply {
-                put(COLUMN_ISBN, "K442934507")
-                put(COLUMN_TITLE, "모우어")
-                put(COLUMN_AUTHOR, "천선란 (지은이)")
-                put(COLUMN_PUBLISHER, "문학동네")
-                put(COLUMN_COVER, "https://image.aladin.co.kr/product/35099/68/coversum/k442934507_1.jpg")
-                put(COLUMN_PUB_DATE, "2024-11-15")
-                put(COLUMN_DESCRIPTION, "2019년 『천 개의 파랑』으로 한국과학문학상 장편 대상을 수상하며 혜성같이 등장해 한국 SF의 눈부신 미래를 만들고 있는 작가 천선란 의 세 번째. 『노랜드』 이후 2년 만에 묶는 소설집으로 미발표작 두 편을 포함해 2020년부터 2024년까지 쓴 단편 여덟 편이 수록되어 있다.")
-                put(COLUMN_PRICE, "17000")
-                put(COLUMN_STATUS, "read")
-                put(COLUMN_MEMO, "책이 조금 어려웠지만 SF는 늘 재미있다 ㅎㅎ")
-                put(COLUMN_START_DATE, "2025-01-21")
-                put(COLUMN_END_DATE, "2025-01-24")
-                put(COLUMN_RATING, 4.0)
-                put(COLUMN_CURRENT_PAGE, 321)
-                put(COLUMN_TOTAL_PAGES, 321)
-
-            },
-            ContentValues().apply {
-                put(COLUMN_ISBN, "8954651135")
-                put(COLUMN_TITLE, "흰 - 2024 노벨문학상 수상작가, 한강 소설")
-                put(COLUMN_AUTHOR, "한강 (지은이), 최진혁 (사진)")
-                put(COLUMN_PUBLISHER, "문학동네")
-                put(COLUMN_COVER, "https://image.aladin.co.kr/product/14322/3/coversum/8954651135_3.jpg")
-                put(COLUMN_PUB_DATE, "2018-04-25")
-                put(COLUMN_DESCRIPTION, "2018년 봄, 한강 작가의 소설 흰을 새롭게 선보인다. 이 년 전 오월에 세상에 나와 빛의 겹겹 오라기로 둘러싸인 적 있던 그 &lt;흰&gt;에 새 옷을 입히게 된 건 소설 발간에 즈음해 행했던 작가의 퍼포먼스가 글과 함께 배었으면 하는 바람에서였다.")
-                put(COLUMN_PRICE, "14500")
-                put(COLUMN_STATUS, "reading")
-                put(COLUMN_MEMO, "2월 안으로는 꼭 전부 읽어야지")
-                put(COLUMN_START_DATE, "2025-01-29")
-                put(COLUMN_CURRENT_PAGE, 85)
-                put(COLUMN_TOTAL_PAGES, 196)
-            },
-            ContentValues().apply {
-                put(COLUMN_ISBN, "K462930652")
-                put(COLUMN_TITLE, "입속 지느러미")
-                put(COLUMN_AUTHOR, "조예은 (지은이)")
-                put(COLUMN_PUBLISHER, "한겨레출판")
-                put(COLUMN_COVER, "https://image.aladin.co.kr/product/34002/54/coversum/k462930652_1.jpg")
-                put(COLUMN_PUB_DATE, "2024-05-30")
-                put(COLUMN_DESCRIPTION, "제2회 황금가지 타임리프 소설 공모전에서 〈오버랩 나이프, 나이프〉로 우수상을 받으며 작품 활동을 시작한 조예은 작가가 신작 소설《입속 지느러미》로 야심 차게 돌아왔다. 인어 이야기와 세이렌 신화를 결합해 잔혹하지만 아련하고 서글프지만 사랑스러운 서사로 독자를 새롭게 만난다.")
-                put(COLUMN_PRICE, "15000")
-                put(COLUMN_STATUS, "toRead")
-                put(COLUMN_MEMO, "여름 장마철에 꼭 읽고 싶은 책")
-            }
-        )
-
-        for (values in testBooks) {
-            db.insert(TABLE_NAME, null, values)
-            Log.d(TAG, "Inserted test book: ISBN = ${values.getAsString(COLUMN_ISBN)}")
-        }
+        val testDataInserter = TestDataInserter(db!!)
+        testDataInserter.addTestBooks()
+        testDataInserter.addTestTimer()
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
