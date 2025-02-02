@@ -96,7 +96,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="읽고 있어요"
-                android:layout_margin="5dp" />
+                android:layout_margin="5dp"
+                android:textSize="12dp" />
 
             <Button
                 android:id="@+id/btn_read"
@@ -104,7 +105,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="다 읽었어요"
-                android:layout_margin="5dp" />
+                android:layout_margin="5dp"
+                android:textSize="12dp" />
 
             <Button
                 android:id="@+id/btn_to_read"
@@ -112,7 +114,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="읽고 싶어요"
-                android:layout_margin="5dp" />
+                android:layout_margin="5dp"
+                android:textSize="12dp" />
 
         </LinearLayout>
     </LinearLayout>
