@@ -170,7 +170,7 @@ class CalendarFragment : Fragment() {
             dialog.show(parentFragmentManager, "ReadingLogDialog")
 
         } else {
-            Toast.makeText(requireContext(), "{$dayOnly}일의 타이머 기록이 없습니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "$dayOnly 일의 타이머 기록이 없습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 
