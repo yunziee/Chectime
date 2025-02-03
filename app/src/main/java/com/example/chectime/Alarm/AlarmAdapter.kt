@@ -57,26 +57,21 @@ class AlarmAdapter(
         holder.deleteButton.setOnClickListener {
             removeAlarm(alarm) // 특정 알람만 삭제
 
-            if (alarmList.isNotEmpty()) {
+            if (position >= 0 && position < alarmList.size) {
                 alarmList.removeAt(position) // 리스트에서 제거
-                notifyDataSetChanged() // UI 업데이트
+                notifyItemRemoved(position) // 항목만 제거
             } else {
-                Log.e("AlarmAdapter", "삭제할 항목이 없습니다.")
+                Log.e("AlarmAdapter", "잘못된 접근입니다")
             }
         }
-
-
-
-
 
         holder.editButton.setOnClickListener {
             editAlarm(alarm)
 
             // 데이터가 수정되었을 경우 반영
-            notifyDataSetChanged() // 데이터를 변경한 후 반드시 호출
+            notifyItemChanged(position) // 수정된 항목만 갱신
         }
     }
-
 
     override fun getItemCount(): Int = alarmList.size
 
