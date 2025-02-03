@@ -142,7 +142,7 @@ class AlarmFragment : Fragment() {
             saveAlarms() // 알람 데이터 저장
             alarmAdapter.notifyDataSetChanged()
             setAlarm(alarm)
-            Toast.makeText(requireContext(), "루틴 설정되었습니다", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "루틴이 설정되었습니다", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
     }
