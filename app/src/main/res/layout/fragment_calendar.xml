@@ -4,7 +4,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/calendarGoalTextView"
+        android:id="@+id/calendarTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="나의 독서 달력"
