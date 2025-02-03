@@ -16,7 +16,8 @@ class AlarmAdapter(
     private val context: Context,
     private val setAlarm: (Alarm) -> Unit,
     private val cancelAlarm: (Alarm) -> Unit,
-    private val editAlarm: (Alarm) -> Unit
+    private val editAlarm: (Alarm) -> Unit,
+    private val removeAlarm: (Alarm) -> Unit
 ) : RecyclerView.Adapter<AlarmAdapter.AlarmViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlarmViewHolder {
@@ -54,7 +55,7 @@ class AlarmAdapter(
         }
 
         holder.deleteButton.setOnClickListener {
-            cancelAlarm(alarm) // 특정 알람만 삭제
+            removeAlarm(alarm) // 특정 알람만 삭제
 
             if (alarmList.isNotEmpty()) {
                 alarmList.removeAt(position) // 리스트에서 제거

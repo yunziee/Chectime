@@ -60,7 +60,8 @@ class AlarmFragment : Fragment() {
             requireContext(),
             ::setAlarm,
             ::cancelAlarm,
-            ::editAlarm
+            ::editAlarm,
+            ::removeAlarm
         )
 
         binding.alarmRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -141,7 +142,7 @@ class AlarmFragment : Fragment() {
             saveAlarms() // 알람 데이터 저장
             alarmAdapter.notifyDataSetChanged()
             setAlarm(alarm)
-            Toast.makeText(requireContext(), "루틴 설정 완료", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "루틴 설정되었습니다", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
     }
@@ -217,7 +218,7 @@ class AlarmFragment : Fragment() {
             setAlarm(alarm)
 
             saveAlarms() // 수정된 알람 저장
-            Toast.makeText(requireContext(), "수정 완료!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "루틴이 수정되었습니다", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
     }
@@ -257,6 +258,7 @@ class AlarmFragment : Fragment() {
     }
 
 
+    // 알람을 끄는 기능
     private fun cancelAlarm(alarm: Alarm) {
         val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
@@ -265,31 +267,39 @@ class AlarmFragment : Fragment() {
             context, alarm.id, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        if (pendingIntent != null) {
-            val cancelIntent = PendingIntent.getBroadcast(
-                context, alarm.id, intent, PendingIntent.FLAG_IMMUTABLE
-            )
-            alarmManager.cancel(cancelIntent)
-            cancelIntent.cancel()
-        }
+        alarmManager.cancel(pendingIntent) // 알람 취소
+        pendingIntent.cancel() // PendingIntent 취소
 
+        // 루틴을 끄는 상태로 표시만 변경 (루틴 삭제 아님)
+        Toast.makeText(requireContext(), "루틴이 꺼졌습니다", Toast.LENGTH_SHORT).show()
+    }
 
-        alarmManager.cancel(pendingIntent)
-        pendingIntent.cancel()
+    // 알람을 삭제하는 기능
+    private fun removeAlarm(alarm: Alarm) {
+        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, AlarmReceiver::class.java)
 
-        // 리스트에서 해당 알람 삭제
+        val pendingIntent = PendingIntent.getBroadcast(
+            context, alarm.id, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        alarmManager.cancel(pendingIntent) // 알람 취소
+        pendingIntent.cancel() // PendingIntent 취소
+
+        // 리스트에서 알람 삭제
         val removed = alarmList.removeIf { it.id == alarm.id }
 
         if (removed) {
-            saveAlarms()
-            Log.d("AlarmFragment", "알람 삭제 완료: ID=${alarm.id}")
+            saveAlarms() // 삭제된 알람 목록 저장
+            Log.d("AlarmFragment", "루틴 삭제 완료: ID=${alarm.id}")
+            Toast.makeText(requireContext(), "루틴이 삭제되었습니다", Toast.LENGTH_SHORT).show()
         } else {
-            Log.d("AlarmFragment", "알람 삭제 실패: ID=${alarm.id} 찾을 수 없음")
+            Log.d("AlarmFragment", "루틴 삭제 실패: ID=${alarm.id}를 찾을 수 없음")
         }
 
         alarmAdapter.notifyDataSetChanged()
-        Toast.makeText(requireContext(), "루틴 삭제 완료", Toast.LENGTH_SHORT).show()
     }
+
 
 
 
