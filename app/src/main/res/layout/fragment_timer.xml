@@ -7,8 +7,6 @@
     android:gravity="center">
 
     <!-- 현재 읽고 있는 책 텍스트 -->
-
-    <!-- Spinner로 책 선택 -->
     <TextView
         android:id="@+id/tm_book"
         android:layout_width="wrap_content"
@@ -18,6 +16,7 @@
         android:textSize="35sp"
         android:fontFamily="@font/laundrygothic"/>
 
+    <!-- Spinner로 책 선택 -->
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="250dp"
