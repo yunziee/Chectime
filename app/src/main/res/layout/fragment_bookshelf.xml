@@ -22,7 +22,8 @@
             android:layout_marginStart="16dp"
             android:text="나의 책장"
             android:textColor="@color/black"
-            android:textSize="24sp" />
+            android:textSize="24sp"
+            android:fontFamily="@font/laundrygothic" />
 
         <!-- 오른쪽에 돋보기 아이콘 -->
     </androidx.appcompat.widget.Toolbar>

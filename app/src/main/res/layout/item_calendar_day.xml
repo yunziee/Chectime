@@ -11,7 +11,8 @@
         android:textSize="14sp"
         android:textColor="#000000"
         android:visibility="visible"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:fontFamily="@font/laundrygothic"/>
 
     <!-- 날짜 강조 원 (날짜 텍스트 위에 겹치도록) -->
     <View

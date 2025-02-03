@@ -36,7 +36,8 @@
                     android:text="책 제목"
                     android:textAlignment="center"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:fontFamily="@font/laundrygothic"/>
 
                 <!-- 저자 -->
                 <TextView
@@ -46,7 +47,8 @@
                     android:layout_marginTop="8dp"
                     android:text="저자"
                     android:textAlignment="center"
-                    android:textSize="16sp"
+                    android:textSize="16dp"
+                    android:fontFamily="@font/cocoa"
                     android:layout_marginBottom="20dp"/>
 
                 <TextView
@@ -54,7 +56,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="진행률"
-                    android:textSize="10sp"/>
+                    android:textSize="10sp"
+                    android:fontFamily="@font/cocoa"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -69,7 +72,8 @@
                         android:ems="10"
                         android:inputType="number"
                         android:hint="현재 페이지"
-                        android:textSize="12sp"/>
+                        android:textSize="12sp"
+                        android:fontFamily="@font/cocoa"/>
 
                     <EditText
                         android:id="@+id/editTextNumber2"
@@ -79,7 +83,8 @@
                         android:ems="10"
                         android:inputType="number"
                         android:hint="전체 페이지"
-                        android:textSize="12sp"/>
+                        android:textSize="12sp"
+                        android:fontFamily="@font/cocoa"/>
 
                 </LinearLayout>
 
@@ -109,7 +114,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="독서 기간" />
+                    android:text="독서 기간"
+                    android:fontFamily="@font/cocoa"/>
 
                 <EditText
                     android:id="@+id/sb_date"
@@ -117,7 +123,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ems="10"
-                    android:inputType="date" />
+                    android:inputType="date"
+                    android:fontFamily="@font/cocoa"/>
             </LinearLayout>
 
             <LinearLayout
@@ -130,7 +137,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="별점" />
+                    android:text="별점"
+                    android:fontFamily="@font/cocoa"/>
 
                 <RatingBar
                     android:id="@+id/sb_rating"
@@ -153,13 +161,15 @@
                     android:id="@+id/sb_memo"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:hint="책의 관한 감상을 적어 보세요" />
+                    android:hint="책의 관한 감상을 적어 보세요"
+                    android:fontFamily="@font/cocoa"/>
 
                 <Button
                     android:id="@+id/sb_save"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="저장" />
+                    android:text="저장"
+                    android:fontFamily="@font/laundrygothic" />
 
             </LinearLayout>
         </LinearLayout>
@@ -181,7 +191,8 @@
                 android:layout_weight="1"
                 android:text="다 읽었어요"
                 android:layout_margin="5dp"
-                android:textSize="12dp" />
+                android:textSize="12dp"
+                android:fontFamily="@font/laundrygothic" />
 
             <Button
                 android:id="@+id/btn_reading"
@@ -190,7 +201,8 @@
                 android:layout_weight="1"
                 android:text="읽고 있어요"
                 android:layout_margin="5dp"
-                android:textSize="12dp" />
+                android:textSize="12dp"
+                android:fontFamily="@font/laundrygothic"/>
 
             <Button
                 android:id="@+id/btn_to_read"
@@ -199,7 +211,8 @@
                 android:layout_weight="1"
                 android:text="읽고 싶어요"
                 android:layout_margin="5dp"
-                android:textSize="12dp" />
+                android:textSize="12dp"
+                android:fontFamily="@font/laundrygothic" />
 
         </LinearLayout>
 

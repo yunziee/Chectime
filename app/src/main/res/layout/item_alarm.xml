@@ -21,6 +21,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginBottom="8dp"
+        android:fontFamily="@font/laundrygothic"
         />
 
     <!-- 시간 표시 (기본 크기) -->
@@ -34,6 +35,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/labelTextView"
         android:layout_marginBottom="4dp"
+        android:fontFamily="@font/cocoa"
         />
 
     <!-- 요일 표시 (기본 크기) -->
@@ -47,6 +49,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/timeTextView"
         android:layout_marginBottom="8dp"
+        android:fontFamily="@font/cocoa"
         />
 
     <!-- 알람 활성화 스위치 (오른쪽 하단에 배치) -->
@@ -54,13 +57,14 @@
         android:id="@+id/alarmSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enabled"
+        android:text="사용"
         android:textSize="14sp"
         android:layout_marginEnd="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/daysTextView"
         android:layout_marginTop="8dp"
+        android:fontFamily="@font/cocoa"
         />
 
     <!-- 수정 버튼 (삭제 버튼 왼쪽에 추가) -->

@@ -27,7 +27,8 @@
             android:text="책 제목"
             android:textAlignment="center"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:fontFamily="@font/laundrygothic"/>
 
         <!-- 저자 -->
         <TextView
@@ -37,7 +38,8 @@
             android:layout_marginTop="8dp"
             android:text="저자"
             android:textAlignment="center"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:fontFamily="@font/cocoa"/>
 
         <!-- 책 설명 -->
         <TextView
@@ -47,7 +49,8 @@
             android:layout_marginTop="8dp"
             android:text="책 설명"
             android:textAlignment="center"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:fontFamily="@font/cocoa"/>
 
         <!-- 출판사 -->
         <TextView
@@ -57,7 +60,8 @@
             android:layout_marginTop="4dp"
             android:text="출판사"
             android:textAlignment="center"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:fontFamily="@font/cocoa"/>
 
         <!-- 발매일 -->
         <TextView
@@ -67,7 +71,8 @@
             android:layout_marginTop="8dp"
             android:text="발매일"
             android:textAlignment="center"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:fontFamily="@font/cocoa"/>
 
         <!-- 가격 -->
         <TextView
@@ -77,7 +82,8 @@
             android:layout_marginTop="8dp"
             android:text="가격"
             android:textAlignment="center"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:fontFamily="@font/cocoa"/>
 
         <!-- 책 저장 버튼 -->
 
@@ -97,7 +103,8 @@
                 android:layout_weight="1"
                 android:text="다 읽었어요"
                 android:layout_margin="5dp"
-                android:textSize="12dp" />
+                android:textSize="12dp"
+                android:fontFamily="@font/laundrygothic"/>
 
             <Button
                 android:id="@+id/btn_reading"
@@ -106,7 +113,8 @@
                 android:layout_weight="1"
                 android:text="읽고 있어요"
                 android:layout_margin="5dp"
-                android:textSize="12dp" />
+                android:textSize="12dp"
+                android:fontFamily="@font/laundrygothic"/>
 
 
             <Button
@@ -116,7 +124,8 @@
                 android:layout_weight="1"
                 android:text="읽고 싶어요"
                 android:layout_margin="5dp"
-                android:textSize="12dp" />
+                android:textSize="12dp"
+                android:fontFamily="@font/laundrygothic"/>
 
         </LinearLayout>
     </LinearLayout>

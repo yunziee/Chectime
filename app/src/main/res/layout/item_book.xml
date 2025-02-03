@@ -25,7 +25,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="책 제목"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:fontFamily="@font/laundrygothic"/>
 
         <TextView
             android:id="@+id/book_author"
@@ -33,7 +34,8 @@
             android:layout_height="wrap_content"
             android:text="저자"
             android:textSize="14sp"
-            android:textColor="#757575"/>
+            android:textColor="#757575"
+            android:fontFamily="@font/cocoa"/>
 
         <TextView
             android:id="@+id/book_publisher"
@@ -41,7 +43,8 @@
             android:layout_height="wrap_content"
             android:text="출판사"
             android:textSize="12sp"
-            android:textColor="#B0B0B0"/>
+            android:textColor="#B0B0B0"
+            android:fontFamily="@font/cocoa"/>
 
         <TextView
             android:id="@+id/book_isbn"
@@ -49,6 +52,7 @@
             android:layout_height="wrap_content"
             android:text="ISBN"
             android:textSize="12sp"
-            android:textColor="#B0B0B0"/>
+            android:textColor="#B0B0B0"
+            android:fontFamily="@font/cocoa"/>
     </LinearLayout>
 </LinearLayout>

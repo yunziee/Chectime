@@ -43,12 +43,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:hint="Alarm Label"
+        android:hint="나의 루틴"
         android:inputType="text"
-        android:textSize="20sp"
+        android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="@id/amPmPicker"
         app:layout_constraintStart_toStartOf="@id/hourPicker"
-        app:layout_constraintTop_toBottomOf="@id/amPmPicker" />
+        app:layout_constraintTop_toBottomOf="@id/amPmPicker"
+        android:fontFamily="@font/cocoa"/>
 
     <!-- 요일 CheckBox 배치 -->
     <LinearLayout
@@ -66,7 +67,8 @@
             android:layout_height="wrap_content"
             android:text="일"
             android:layout_weight="1"
-            android:textSize="14sp" />
+            android:textSize="16dp"
+            android:fontFamily="@font/cocoa"/>
 
         <CheckBox
             android:id="@+id/checkbox_mon"
@@ -74,7 +76,8 @@
             android:layout_height="wrap_content"
             android:text="월"
             android:layout_weight="1"
-            android:textSize="14sp" />
+            android:textSize="16dp"
+            android:fontFamily="@font/cocoa" />
 
         <CheckBox
             android:id="@+id/checkbox_tue"
@@ -82,7 +85,8 @@
             android:layout_height="wrap_content"
             android:text="화"
             android:layout_weight="1"
-            android:textSize="14sp" />
+            android:textSize="16dp"
+            android:fontFamily="@font/cocoa" />
 
         <CheckBox
             android:id="@+id/checkbox_wed"
@@ -90,7 +94,8 @@
             android:layout_height="wrap_content"
             android:text="수"
             android:layout_weight="1"
-            android:textSize="14sp" />
+            android:textSize="16dp"
+            android:fontFamily="@font/cocoa" />
 
         <CheckBox
             android:id="@+id/checkbox_thu"
@@ -98,7 +103,8 @@
             android:layout_height="wrap_content"
             android:text="목"
             android:layout_weight="1"
-            android:textSize="14sp" />
+            android:textSize="16dp"
+            android:fontFamily="@font/cocoa" />
 
         <CheckBox
             android:id="@+id/checkbox_fri"
@@ -106,7 +112,8 @@
             android:layout_height="wrap_content"
             android:text="금"
             android:layout_weight="1"
-            android:textSize="14sp" />
+            android:textSize="16dp"
+            android:fontFamily="@font/cocoa" />
 
         <CheckBox
             android:id="@+id/checkbox_sat"
@@ -114,7 +121,8 @@
             android:layout_height="wrap_content"
             android:text="토"
             android:layout_weight="1"
-            android:textSize="14sp" />
+            android:textSize="16dp"
+            android:fontFamily="@font/cocoa" />
 
     </LinearLayout>
 
@@ -123,10 +131,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
-        android:text="Save"
+        android:text="저장"
         app:layout_constraintStart_toStartOf="@id/alarmLabel"
         app:layout_constraintEnd_toEndOf="@id/alarmLabel"
         app:layout_constraintTop_toBottomOf="@id/alarmLabel"
-        />
+        android:fontFamily="@font/laundrygothic" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

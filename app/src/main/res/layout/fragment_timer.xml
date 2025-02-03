@@ -15,14 +15,16 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="지금 읽고 있는 책은"
-        android:textSize="35sp" />
+        android:textSize="35sp"
+        android:fontFamily="@font/laundrygothic"/>
 
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="250dp"
         android:layout_height="48dp"
         android:textSize="20sp"
-        android:layout_marginBottom="32dp"/>
+        android:layout_marginBottom="32dp"
+        android:fontFamily="@font/cocoa"/>
 
     <!-- 타이머 텍스트 -->
     <TextView
@@ -31,7 +33,8 @@
         android:layout_height="wrap_content"
         android:text="00:00:00"
         android:textSize="40sp"
-        android:layout_marginBottom="32dp"/>
+        android:layout_marginBottom="32dp"
+        android:fontFamily="@font/laundrygothic"/>
 
     <!-- 타이머 버튼들을 가로로 배치 -->
     <LinearLayout
@@ -47,7 +50,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Start"
-            android:layout_marginEnd="16dp"/>
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/laundrygothic" />
 
         <!-- 타이머 정지 버튼 -->
         <Button
@@ -55,14 +59,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Stop"
-            android:layout_marginEnd="16dp"/>
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/laundrygothic" />
 
         <!-- 타이머 리셋 버튼 -->
         <Button
             android:id="@+id/btnReset"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Reset"/>
+            android:text="Reset"
+            android:fontFamily="@font/laundrygothic" />
     </LinearLayout>
 
     <!-- 저장 버튼 -->
@@ -71,6 +77,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="저장"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/laundrygothic" />
 
 </LinearLayout>
