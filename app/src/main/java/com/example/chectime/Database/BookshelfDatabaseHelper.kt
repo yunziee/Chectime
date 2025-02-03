@@ -10,8 +10,8 @@ import android.util.Log
 class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
-        private const val DATABASE_NAME = "bookshelf.db"
-        private const val DATABASE_VERSION = 3
+        private const val DATABASE_NAME = "chectime.db"
+        private const val DATABASE_VERSION = 4
 
         const val TABLE_NAME = "books"
         const val COLUMN_TITLE = "title"
@@ -30,8 +30,8 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
         const val COLUMN_CURRENT_PAGE = "current_page" // 현재 페이지
         const val COLUMN_TOTAL_PAGES = "total_pages" // 전체 페이지
 
-        const val COLUMN_TIMER_DURATION = "timer_duration" // 타이머 지속 시간 (초 단위)
         const val TIMER_TABLE_NAME = "timer_records"
+        const val COLUMN_TIMER_DURATION = "timer_duration" // 타이머 지속 시간 (초 단위)
         const val COLUMN_TIMER_ID = "timer_id"
         const val COLUMN_TIMER_DATE = "timer_date"
     }
@@ -79,13 +79,10 @@ class BookshelfDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATA
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (oldVersion < 3) {
-            db.execSQL("CREATE TABLE IF NOT EXISTS $TIMER_TABLE_NAME (" +
-                    "$COLUMN_TIMER_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "$COLUMN_ISBN TEXT, " +
-                    "$COLUMN_TIMER_DATE TEXT, " +
-                    "$COLUMN_TIMER_DURATION INTEGER, " +
-                    "FOREIGN KEY ($COLUMN_ISBN) REFERENCES books($COLUMN_ISBN))")
+        if (oldVersion < 4) {
+            db?.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
+            db?.execSQL("DROP TABLE IF EXISTS $TIMER_TABLE_NAME")
+            onCreate(db)
         }
     }
 
