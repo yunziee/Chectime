@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -15,9 +16,10 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.chectime.databinding.FragmentAlarmBinding
-import java.util.Calendar
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.util.*
 
 class AlarmFragment : Fragment() {
 
@@ -26,6 +28,7 @@ class AlarmFragment : Fragment() {
 
     private val alarmList = ArrayList<Alarm>()
     private lateinit var alarmAdapter: AlarmAdapter
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,8 +36,10 @@ class AlarmFragment : Fragment() {
     ): View? {
         _binding = FragmentAlarmBinding.inflate(inflater, container, false)
 
+        sharedPreferences = requireContext().getSharedPreferences("AlarmPrefs", Context.MODE_PRIVATE)
+
         // Android 13(API 33) 이상에서 정확한 알람 권한 확인
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {  // API 33 이상
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
             if (!alarmManager.canScheduleExactAlarms()) {
                 val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
@@ -42,11 +47,9 @@ class AlarmFragment : Fragment() {
             }
         }
 
+        loadAlarms() // 알람 목록 불러오기
         setupRecyclerView()
         setupAddAlarmButton()
-
-        // 초기 알람 로드
-        loadAlarms()
 
         return binding.root
     }
@@ -57,7 +60,7 @@ class AlarmFragment : Fragment() {
             requireContext(),
             ::setAlarm,
             ::cancelAlarm,
-            ::editAlarm // 수정 버튼 클릭 시 호출할 메서드 전달
+            ::editAlarm
         )
 
         binding.alarmRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -135,6 +138,7 @@ class AlarmFragment : Fragment() {
             )
 
             alarmList.add(alarm)
+            saveAlarms() // 알람 데이터 저장
             alarmAdapter.notifyDataSetChanged()
             setAlarm(alarm)
             Toast.makeText(requireContext(), "루틴 설정 완료", Toast.LENGTH_SHORT).show()
@@ -212,11 +216,27 @@ class AlarmFragment : Fragment() {
             // 알람 업데이트
             setAlarm(alarm)
 
+            saveAlarms() // 수정된 알람 저장
             Toast.makeText(requireContext(), "수정 완료!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
     }
 
+    private fun saveAlarms() {
+        val gson = Gson()
+        val json = gson.toJson(alarmList)
+        sharedPreferences.edit().putString("alarms", json).apply()
+    }
+
+    private fun loadAlarms() {
+        val gson = Gson()
+        val json = sharedPreferences.getString("alarms", null)
+        if (json != null) {
+            val type = object : TypeToken<List<Alarm>>() {}.type
+            alarmList.clear()
+            alarmList.addAll(gson.fromJson(json, type))
+        }
+    }
 
     fun setAlarm(alarm: Alarm) {
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -233,19 +253,6 @@ class AlarmFragment : Fragment() {
         )
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarm.timeInMillis, pendingIntent)
-    }
-
-    private fun loadAlarms() {
-        alarmList.clear()
-        // Example 알람 추가
-        val sampleAlarm = Alarm(
-            id = 1,
-            label = "테스트 알람",
-            timeInMillis = System.currentTimeMillis() + 60000,
-            days = listOf(2, 4, 6)
-        )
-        alarmList.add(sampleAlarm)
-        alarmAdapter.notifyDataSetChanged()
     }
 
     private fun cancelAlarm(alarm: Alarm) {
