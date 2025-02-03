@@ -246,27 +246,52 @@ class AlarmFragment : Fragment() {
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
-            requireContext(),
-            alarm.id,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            context, alarm.id, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        // 기존 알람이 있다면 먼저 취소
+        alarmManager.cancel(pendingIntent)
+
+        // 새로운 알람 설정
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarm.timeInMillis, pendingIntent)
     }
 
+
     private fun cancelAlarm(alarm: Alarm) {
-        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(requireContext(), AlarmReceiver::class.java)
+        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, AlarmReceiver::class.java)
+
         val pendingIntent = PendingIntent.getBroadcast(
-            requireContext(),
-            alarm.id,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            context, alarm.id, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        if (pendingIntent != null) {
+            val cancelIntent = PendingIntent.getBroadcast(
+                context, alarm.id, intent, PendingIntent.FLAG_IMMUTABLE
+            )
+            alarmManager.cancel(cancelIntent)
+            cancelIntent.cancel()
+        }
+
+
         alarmManager.cancel(pendingIntent)
+        pendingIntent.cancel()
+
+        // 리스트에서 해당 알람 삭제
+        val removed = alarmList.removeIf { it.id == alarm.id }
+
+        if (removed) {
+            saveAlarms()
+            Log.d("AlarmFragment", "알람 삭제 완료: ID=${alarm.id}")
+        } else {
+            Log.d("AlarmFragment", "알람 삭제 실패: ID=${alarm.id} 찾을 수 없음")
+        }
+
+        alarmAdapter.notifyDataSetChanged()
+        Toast.makeText(requireContext(), "루틴 삭제 완료", Toast.LENGTH_SHORT).show()
     }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()

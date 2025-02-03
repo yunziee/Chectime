@@ -16,7 +16,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val days = intent?.getIntArrayExtra("days")?: intArrayOf()
 
         // Toast 메시지 표시
-        Toast.makeText(context, "루틴이 설정되었습니다.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "루틴 설정 완료", Toast.LENGTH_SHORT).show()
 
         // 알림 소리 울리기
         showNotification(context, label)

@@ -1,6 +1,7 @@
 package com.example.chectime
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,10 +54,19 @@ class AlarmAdapter(
         }
 
         holder.deleteButton.setOnClickListener {
-            alarmList.removeAt(position)
-            notifyItemRemoved(position)
-            notifyItemRangeChanged(position, alarmList.size)
+            cancelAlarm(alarm) // 특정 알람만 삭제
+
+            if (alarmList.isNotEmpty()) {
+                alarmList.removeAt(position) // 리스트에서 제거
+                notifyDataSetChanged() // UI 업데이트
+            } else {
+                Log.e("AlarmAdapter", "삭제할 항목이 없습니다.")
+            }
         }
+
+
+
+
 
         holder.editButton.setOnClickListener {
             editAlarm(alarm)
