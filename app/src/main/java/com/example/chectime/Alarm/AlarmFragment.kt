@@ -142,7 +142,6 @@ class AlarmFragment : Fragment() {
             saveAlarms() // 알람 데이터 저장
             alarmAdapter.notifyDataSetChanged()
             setAlarm(alarm)
-            Toast.makeText(requireContext(), "루틴이 설정되었습니다", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
     }
@@ -255,6 +254,8 @@ class AlarmFragment : Fragment() {
 
         // 새로운 알람 설정
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarm.timeInMillis, pendingIntent)
+
+        Toast.makeText(requireContext(), "루틴이 설정되었습니다", Toast.LENGTH_SHORT).show()
     }
 
 
@@ -270,7 +271,7 @@ class AlarmFragment : Fragment() {
         alarmManager.cancel(pendingIntent) // 알람 취소
         pendingIntent.cancel() // PendingIntent 취소
 
-        // 루틴을 끄는 상태로 표시만 변경 (루틴 삭제 아님)
+        // 알람을 끄는 상태로 표시만 변경 (알람 삭제 아님)
         Toast.makeText(requireContext(), "루틴이 꺼졌습니다", Toast.LENGTH_SHORT).show()
     }
 
